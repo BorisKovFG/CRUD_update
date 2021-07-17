@@ -16,5 +16,10 @@ class SchoolRepository
         $data = file_get_contents($file);
         return json_decode($data, true);
     }
+    public function find($data) // this function does not work right it only demonstrates working of update
+    {
+        $data = file_get_contents(self::FILE);
+        return json_decode($data, true);
+    }
 
 }

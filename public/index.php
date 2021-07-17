@@ -39,16 +39,46 @@ $app->get("/" , function ($request, $response) use ($router) {
 
 $app->get("/schools", function ($request, $response) use ($router, $repo) {
     $school = $repo->read();
-    $url = $router->urlFor("editSchool");
     $params = [
         'school' => $school
     ];
-    $url = "schools/{$school['id']}/edit";
+    $url = $router->urlFor("editSchool", ['id' => $school['id']]);
     $response = $response->write("<a href=$url>Edit name of School by id</a>");
     return $this->get('renderer')->render($response, "schools/index.phtml", $params);
 })->setName("schools");
 
-$app->get("schools", function ($request, $response) {
-    return $this->get('renderer')->render($response, 'schools/edit.phtml');
+$app->get("/schools/{id}/edit", function ($request, $response, array $args) use ($repo) {
+    $id = $args['id'];
+    $school = $repo->find($id);
+    $flash = $this->get('flash')->getMessages();
+    $params = [
+        'errors' => [],
+        'school' => $school,
+        'flash' => $flash
+    ];
+    return $this->get('renderer')->render($response, 'schools/edit.phtml', $params);
 })->setName("editSchool");
+
+$app->patch("/schools/{id}", function ($request, $response, array $args) use ($repo, $router) {
+    $id = $args['id'];
+    $dataFromDb = $repo->find($id);
+    $dataFromForm = $request->getParsedBodyParam('school');
+
+    $validator = new \App\Validator();
+    $errors = $validator->validate($dataFromForm);
+
+    if (count($errors) === 0) {
+        $dataFromDb['name'] = $dataFromForm['name'];
+        $repo->save($dataFromDb); // save data which was from db, because we edit only name
+        $this->get('flash')->addMessage("success", "Name was edit");
+        $url = $router->urlFor("editSchool", ['id' => $dataFromDb['id']]);
+        return $response->withRedirect($url);
+    }
+
+    $params = [
+        'school' => $dataFromDb,
+        'errors' => $errors
+    ];
+    return $this->get('renderer')->render($response->withStatus(422), "/schools/edit.phtml", $params);
+});
 $app->run();

@@ -1,4 +1,4 @@
 {
-    "id": "123",
-    "name": "State school 123"
+    "id": "111",
+    "name": "CA State School"
 }

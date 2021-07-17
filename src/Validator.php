@@ -4,15 +4,11 @@ namespace App;
 
 class Validator
 {
-    public function validate(array $post)
+    public function validate(array $school)
     {
         $errors = [];
-        if ($post['name'] === '') {
+        if ($school['name'] === '') {
             $errors['name'] = "Can't be blank";
-        }
-
-        if ($post['body'] === '') {
-            $errors['body'] = "Can't be blank";
         }
 
         return $errors;

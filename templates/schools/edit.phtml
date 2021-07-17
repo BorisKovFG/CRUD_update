@@ -1,0 +1,23 @@
+<ul>
+    <?php foreach ($flash as $messages) : ?>
+        <?php foreach ($messages as $message) : ?>
+            <li><?= $message ?></li>
+        <?php endforeach ?>
+    <?php endforeach ?>
+</ul>
+<form action="/schools/<?= htmlspecialchars($school['id']) ?>" method="post">
+    <input type="hidden" name="_METHOD" value="PATCH">
+    <div>
+        <label>
+            Name:
+            <input type="text" name="school[name]" required placeholder="Enter new name"
+            value="<?= htmlspecialchars($school['name']); ?>">
+            <?php if (isset($errors['name'])): ?>
+            <div><?= htmlspecialchars($errors['name']); ?></div>
+            <?php endif; ?>
+        </label>
+    </div>
+    <div>
+        <input type="submit" value="Edit name">
+    </div>
+</form>
